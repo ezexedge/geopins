@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 
 const typeDefs = require('./typeDefs')
 const resolvers = require('./resolvers')
+const {findOrCreateUser} = require('./controllers/useController')
 require('dotenv').config()
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -13,7 +14,21 @@ mongoose.connect(process.env.MONGO_URI, {
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: async ({req}) => {
+        let authToken = null
+        let currectUser = null
+
+        try{
+            authToken = req.headers.authorization
+            if(authToken){
+            currentUser =  await  findOrCreateUser(authToken)
+            }
+        }catch(err){
+            console.log('debes registrarte')
+        }
+        return {currentUser}
+    }
 
 })
 

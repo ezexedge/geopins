@@ -1,3 +1,5 @@
+const { AuthenticationError } = require('apollo-server')
+
 const user = {
     
 
@@ -8,8 +10,15 @@ const user = {
 
 }
 
+const authenticated = next => (root,args,ctx,info) => {
+    if(!ctx.currentUser){
+        throw new AuthenticationError('debes iniciar sesion')
+    }
+    return next(root,args,ctx,info)
+}
+
 module.exports = {
     Query : {
-        me: () => user
+        me: authenticated((root,args,ctx) => ctx.currentUser)
     }
 }
