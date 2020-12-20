@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
  import Typography from "@material-ui/core/Typography";
 
 import Context from '../pages/context'
+import Signout from '../components/Auth/Signout'
 
 const Header = ({ classes }) => {
 
@@ -46,6 +47,7 @@ const {currentUser} = state
                   </Typography>
               </div>
             )}
+            <Signout/>
         </Toolbar>
       </AppBar>
     </div>
