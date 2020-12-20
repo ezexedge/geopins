@@ -1,11 +1,80 @@
-import React from "react";
+import React ,{useState,useEffect} from "react";
+import ReactMapGL ,{NavigationControl,Marker} from 'react-map-gl'
 import { withStyles } from "@material-ui/core/styles";
+import PinIcon from './PinIcon'
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
+const INITIAL_VIEWPORT = {
+  latitude: 37.7577,
+  longitude: -122.4376,
+  zoom: 13
+}
+
+
 const Map = ({ classes }) => {
-  return <div>Map</div>;
+
+  const [viewport ,setViewport ] = useState(INITIAL_VIEWPORT)
+  const [userPosition,setUserposition] = useState(null)
+
+  useEffect(()=>{
+
+    getUserPosition()
+
+  },[])
+  
+  
+  const getUserPosition = () => {
+
+    if("geolocation" in navigator){
+      navigator.geolocation.getCurrentPosition(position => {
+        const {longitude , latitude} = position.coords
+
+        setViewport({ ...viewport, latitude,longitude })
+        setUserposition({latitude,longitude})
+      })
+    }
+
+
+  }
+
+
+  return (
+    <div className={classes.root}>
+        <ReactMapGL
+        width="100vw"
+        height="calc(100vh - 64px)"
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapboxApiAccessToken="pk.eyJ1IjoiZXplYWJjZGUiLCJhIjoiY2tpd3Ixc2p0MXo3ZzJxcDR0cnRycGRrbiJ9.0X06PMsFMoN5hOzj8MQgDQ"
+        onViewportChange={newViewport => setViewport(newViewport)}
+        {...viewport}
+        >
+          <div className={classes.navigationControl}>
+            <NavigationControl
+              
+              onViewportChange={newViewport => setViewport(newViewport)}
+
+            />
+          </div>
+
+          {userPosition && (
+
+              <Marker
+              latitude={userPosition.latitude}
+              longitude={userPosition.longitude}
+              offsetLeft={0}
+              offsetTop={0}
+              >
+                <PinIcon size={40}  color="red" />
+
+              </Marker>
+
+          )}
+        </ReactMapGL>
+        
+    </div>
+  );
 };
 
 const styles = {
