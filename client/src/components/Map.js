@@ -1,6 +1,8 @@
 import React ,{useState,useEffect,useContext} from "react";
 import ReactMapGL ,{NavigationControl,Marker} from 'react-map-gl'
 import { withStyles } from "@material-ui/core/styles";
+import {useClient} from '../client'
+import {GET_PINS_QUERY} from '../graphql/queries'
 import PinIcon from './PinIcon'
 import Context from '../pages/context'
 import Blog from './Blog'
@@ -16,6 +18,8 @@ const INITIAL_VIEWPORT = {
 
 
 const Map = ({ classes }) => {
+
+  const client = useClient()
   const {state,dispatch} = useContext(Context)
   const [viewport ,setViewport ] = useState(INITIAL_VIEWPORT)
   const [userPosition,setUserposition] = useState(null)
@@ -25,7 +29,17 @@ const Map = ({ classes }) => {
     getUserPosition()
 
   },[])
+
+  useEffect(()=>{
+
+    getPins()
+
+  },[])
   
+  const getPins = async () => {
+    const {getPins} = await client.request(GET_PINS_QUERY)
+    console.log({getPins})
+  }
   
   const getUserPosition = () => {
 
